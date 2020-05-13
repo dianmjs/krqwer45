@@ -55,9 +55,9 @@ class App extends Component {
           <ul className="todo">
             {this.state.tasks.map((task, index) => (
               <li
+                key={index}
                 onClick={this.handleClick.bind(this)}
                 className={task.done ? "done" : ""}
-                key={task.id}
               >
                 {task.name}
               </li>
