@@ -1,82 +1,56 @@
-import React, { Component } from "react";
-
+import React, { useState } from "react";
+import Form from "./components/Form";
 /// Modifica el componente para que se puedan agregar tareas, tachar y destacharlas y error de validacion en el input
 
-class App extends Component {
-  constructor() {
-    super();
-    this.state = {
-      tasks: [
-        { id: 1, name: "Sacar la ropa", done: false },
-        { id: 2, name: "Hacer la cama", done: true },
-        { id: 3, name: "Leer un rato", done: false },
-      ],
-      newTask: "",
-    };
-  }
+function App() {
+  const tasks = [
+    { id: 1, name: "Sacar la ropa", done: false },
+    { id: 2, name: "Hacer la cama", done: true },
+    { id: 3, name: "Leer un rato", done: false },
+  ];
 
-  addNewTask(event) {
-    this.setState({
-      newTask: event.target.value,
-    });
-  }
+  //state
+  const [thetask, setThetask] = useState(tasks);
+  const [value, setValue] = useState("");
 
-  handleClick(event) {
-    const index = this.state.tasks.findIndex(
-      (task) => task.name === event.target.innerHTML
-    );
-    this.setState({
-      tasks: this.state.tasks.map((task, i) =>
-        i === index ? { name: task.name, done: !task.done } : task
-      ),
-    });
-  }
-
-  handleSubmit = (event) => {
-    if (this.state.newTask !== "") {
-      var taskId = this.state.tasks.length + 1;
-      this.setState({
-        tasks: this.state.tasks.concat({
-          id: taskId,
-          name: this.state.newTask,
-          done: false,
-        }),
-        newTask: "",
-      });
-    }
+  //onchange
+  const updateTask = (event) => {
     event.preventDefault();
+    setValue(event.target.value);
   };
 
-  render() {
-    return (
-      <div className="wrapper">
-        <div className="list">
-          <h3>Por hacer:</h3>
-          <ul className="todo">
-            {this.state.tasks.map((task, index) => (
-              <li
-                key={index}
-                onClick={this.handleClick.bind(this)}
-                className={task.done ? "done" : ""}
-              >
-                {task.name}
-              </li>
-            ))}
-          </ul>
-          <form onSubmit={this.handleSubmit}>
-            <input
-              type="text"
-              className={this.state.newTask === "" ? "error" : ""}
-              id="new-task"
-              placeholder="Ingresa una tarea y oprime Enter"
-              value={this.state.newTask}
-              onChange={this.addNewTask.bind(this)}
-            />
-          </form>
-        </div>
-      </div>
-    );
-  }
+  //Unir array
+  const handleClick = (value) => {
+    const newTodos = [...thetask, { id: Date.now(), name: value, done: false }];
+    setThetask(newTodos);
+  };
+
+  //Evento del formulario
+  const submit = (event) => {
+    event.preventDefault();
+    if (!value) return;
+    handleClick(value);
+    event.target.reset();
+  };
+
+  //Tachado de tareas
+  const handleInline = (index) => {
+    const tachado = [...thetask];
+    tachado[index].done = !tachado[index].done;
+    setThetask(tachado);
+  };
+
+  return (
+    <div>
+      <Form
+        thetask={thetask}
+        updateTask={updateTask}
+        submit={submit}
+        handleClick={handleClick}
+        handleInline={handleInline}
+      />
+    </div>
+  );
 }
 
 export default App;
